@@ -1,0 +1,14 @@
+**********************************************************************
+  METIS 4.0.3 Copyright 1998, Regents of the University of Minnesota
+
+Graph Information ---------------------------------------------------
+  Name: MS1_metis_flow.dat, #Vertices: 45, #Edges: 44, #Parts: 24
+
+K-way Partitioning... -----------------------------------------------
+  24-way Edge-Cut:      20, Balance:  2.54 
+
+Timing Information --------------------------------------------------
+  I/O:          		   0.000
+  Partitioning: 		   0.000   (KMETIS time)
+  Total:        		   0.001
+**********************************************************************

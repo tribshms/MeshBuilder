@@ -1,0 +1,14 @@
+**********************************************************************
+  METIS 4.0.3 Copyright 1998, Regents of the University of Minnesota
+
+Graph Information ---------------------------------------------------
+  Name: MS1_metis_nconn.dat, #Vertices: 45, #Edges: 111, #Parts: 12
+
+K-way Partitioning... -----------------------------------------------
+  12-way Edge-Cut:      66, Balance:  1.27 
+
+Timing Information --------------------------------------------------
+  I/O:          		   0.000
+  Partitioning: 		   0.000   (KMETIS time)
+  Total:        		   0.001
+**********************************************************************
