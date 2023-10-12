@@ -4,7 +4,11 @@ set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-13) # need to set to gcc compiler t
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-#set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
+# Add the path to the directory containing libasan.so
+#link_directories(/path/to/library_directory)
+## Link your target against libasan
+#target_link_libraries(your_target_name PRIVATE asan)
 
 set(exe "meshBuilder") # this line is not required but can be changed to change name of executable
 project(${exe})
@@ -12,7 +16,9 @@ add_executable(${exe} src/main.cpp)
 
 
 # Set linker flags
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic ")
+
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope -g") # different options available for using Sanitizer
 
 # currently only tested on new macs (M1 and M2 chips)
 message(WARNING "Compiling MeshBuilder for tRIBS")
