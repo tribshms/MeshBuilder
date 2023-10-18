@@ -24,10 +24,10 @@ serial and parallel should produce the same qout information.
 You will know that you correctly got Option 9 because it will inform you that
 it is loading files.
 
-Read reach nodes: Pass 1
-Read reach edges: Pass 1
-Read reach nodes: Pass 2
-Read reach edges: Pass 2
+Read reach nodes: Pass 1  
+Read reach edges: Pass 1  
+Read reach nodes: Pass 2  
+Read reach edges: Pass 2  
 
 The meshBuilder operates only from a .points file at this time.  If the
 points file changes the meshBuilder must be run again, but otherwise the
