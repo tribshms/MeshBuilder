@@ -10,8 +10,7 @@ cmake --build path/to/build/directory --target all
 The meshBuilder runs off the .in file which used by tRIBS and in order to build a partitioned mesh the value 9 must be supplied for mesh buildin option.
 This is demonstrated as follows:
 
-OPTMESHINPUT:   Mesh input data option
-
+OPTMESHINPUT:   Mesh input data option  
 9
 
 Then run meshBuilder demonstrated by the below example:
