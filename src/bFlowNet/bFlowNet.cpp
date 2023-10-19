@@ -1206,8 +1206,8 @@ void bFlowNet::PrintArcInfoLinks(bInputFile &infile)
 
   ControlOut.open(fullName);
   if ( !ControlOut.good() ) {
-    cerr<<"Can't create the file for simulation control. Memory may "
-	<<"be exhausted: exiting..."<<endl<<flush;
+    cerr<<"Unable to open: "<< fullName
+	<<" exiting..."<<endl<<flush;
     exit(2);
   }
   ControlOut.setf( ios::fixed, ios::floatfield);
