@@ -50,4 +50,7 @@ These are binary files with the data needed for the fluxnodes and edges.  Becaus
 ### flow.meshb
 This binary file contains the member variables needed by tFlowNet which was already run on meshBuilder, but whichtRIBS will use.
 
-
+### TODO:
+- Add additional instructions for running metis
+- Can we package in metis and to mesh builder build?
+- Need to package helper scripts in a easy way to run w/ subprocess
