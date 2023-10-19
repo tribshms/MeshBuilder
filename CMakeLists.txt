@@ -4,7 +4,7 @@ set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-13) # need to set to gcc compiler t
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 #set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE ON)
-set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")c
+set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
 set(exe "meshBuilder") # this line is not required but can be changed to change name of executable
 project(${exe})
