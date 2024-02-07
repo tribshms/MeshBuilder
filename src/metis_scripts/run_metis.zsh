@@ -49,7 +49,7 @@ if [[ $2 -eq 1 ]];then
 	perl connectivity2metis.pl connectivity.meshb $3_metis_flow.dat 1 0 0 0 0 
 	# The above instruction creates a file for SF partitioning called:  basename_metis_flow.dat 
 
-	./kmetis $3_metis_flow.dat $1 > flow_$3nodes_$1_stats.out
+	./gpmetis $3_metis_flow.dat $1 > flow_$3nodes_$1_stats.out
 	# The above instruction creates a file called:  basename_metis_flow.dat.part.NumberOfNodes 
 	# The report of the instruction is outputted in flow_basename_NumberOfNodesnodes_stats.out
 
@@ -63,7 +63,7 @@ if [[ $2 -eq 2 ]];then
 	perl connectivity2metis.pl connectivity.meshb $3_metis_nconn.dat 1 0 0 0 2
 	# The above instruction creates a file for SSF partitioning called:  basename_metis_nconn.dat
 
-	./kmetis $3_metis_nconn.dat $1 > nconn_$3nodes_$1_stats.out
+	./gpmetis $3_metis_nconn.dat $1 > nconn_$3nodes_$1_stats.out
 	# The above instruction creates a file called:  basename_metis_nconn.dat.part.NumberOfNodes 
 	# The report of the instruction is outputted in nconn_basename_NumberOfNodesnodes_stats.out
 
@@ -77,7 +77,7 @@ if [[ $2 -eq 3 ]];then
 	perl connectivity2metis.pl connectivity.meshb $3_metis_upnconn.dat 1 1 0 0 2
 	# The above instruction creates a file for SSF-H partitioning called:  basename_metis_upnconn.dat
 
-	./kmetis $3_metis_upnconn.dat $1 > upnconn_$3nodes_$1_stats.out
+	./gpmetis $3_metis_upnconn.dat $1 > upnconn_$3nodes_$1_stats.out
 	# The above instruction creates a file called:  basename_metis_upnconn.dat.part.NumberOfNodes 
 	# The report of the instruction is outputted in upnconn_basename_NumberOfNodesnodes_stats.out
 
