@@ -1,14 +1,10 @@
+// MeshBuilder
+//
+// Copyright (c) 2024. tRIBS Developers
+//
+// See LICENSE file in the project root for full license information.
+
 /***************************************************************************
-**
-**  		             tRIBS Version 1.0
-**
-**              TIN-based Real-time Integrated Basin Simulator
-**		         Ralph M. Parsons Laboratory
-**  		    Massachusetts Institute of Technology
-**  
-**
-**		            Beta Release, 9/2001
-**
 **
 **  predicates.h:   Header File for predicates.cpp
 **

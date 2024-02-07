@@ -45,10 +45,10 @@ The counts of nodes and edges are used to find the offset within the file for a 
 These are binary files with the data needed to build the mesh and flow net for any reach.  This will not contain all of the tCNode information but only the part of it needed for the flow net.  When option 9 has initialized the mesh is built, the flownet is built, and those variables needed by both are filled in.  The rest of the initialization is then done by the current simulation.  So tFlowNet will be initialized but tKinemat will not for instance.
 
 ### fluxnodes.meshb & fluxedges.meshb
-These are binary files with the data needed for the fluxnodes and edges.  Because of runon, two nodes beyond thenode owned by a reach must be kept, and the edges which allow circling those nodes must be supplied.  These nodes are added as "inActive" on a processor.  Since it is possiblefor different reaches to have the same flux nodes, meshBuilder makes sure they are unique on a processor.
+These are binary files with the data needed for the fluxnodes and edges.  Because of runon, two nodes beyond thenode owned by a reach must be kept, and the edges which allow circling those nodes must be supplied.  These nodes are added as "inActive" on a processor.  Since it is possible for different reaches to have the same flux nodes, meshBuilder makes sure they are unique on a processor.
 
 ### flow.meshb
-This binary file contains the member variables needed by tFlowNet which was already run on meshBuilder, but whichtRIBS will use.
+This binary file contains the member variables needed by tFlowNet which was already run on meshBuilder, but which tRIBS will use.
 
 ### TODO:
 - Add additional instructions for running metis
