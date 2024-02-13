@@ -355,10 +355,15 @@ void bFlowNet::SortNodesByNetOrder()
         done = false;
       }
     }
-      
+
     nUnsortedNodes -= nThisPass;
 
-    // Reset all active node tracers to value 1
+      if((nThisPass ==  0) & (nUnsortedNodes>0)) {
+          throw runtime_error("No more tracers identified, but unsortedNodes remain.\n Check Points File");
+      }
+
+
+      // Reset all active node tracers to value 1
     for (listIter = nodeList->begin(); 
          listIter != nodeList->getLastActive(); listIter++) {
          (*listIter)->ActivateSortTracer();
@@ -2308,7 +2313,7 @@ void bFlowNet::SortStreamNodes()
     nStreams -= nThisPass;
 
     // Reset all active node tracers to value 1
-    for (streamIter == streamList.begin();
+    for (streamIter = streamList.begin();
          streamIter != streamList.end(); streamIter++) {
          (*streamIter)->ActivateSortTracer();
     }
