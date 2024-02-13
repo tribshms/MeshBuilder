@@ -26,11 +26,29 @@ int main( int argc, char **argv )
     using std::endl;
   #endif
 
+    if (argc < 2) {
+        // No arguments provided, print an error message
+        cerr << "Error: No input file provided." << endl;
+        return 1; // Return an error code
+    }
+
+
   // Check command-line arguments
   bInputFile InputFile(argv[1]);
   cout << "Reading input file " << argv[1] << endl;
 
-  bMeshBuilder MeshBuilder(InputFile);
+    try {
+        // Call the function to process the input file
+        bMeshBuilder MeshBuilder(InputFile);
+
+        // Continue with the rest of your code
+    } catch (const exception& e) {
+        // Handle the exception (print an error message, etc.)
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1; // Return an error code
+    }
+
+
 
   cout<<"\n\nPart 9: Deleting Objects and Exiting Program"<<endl;
   cout<<"------------------------------------------------"<<endl<<endl;
