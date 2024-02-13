@@ -1,8 +1,13 @@
 cmake_minimum_required(VERSION 3.20)
 set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-13) # need to set to gcc compiler to acces _List_iterator
+
+set(docker ON) #for docker build
+
+if(NOT docker)
+    set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-13) # need to set to gcc compiler to acces _List_iterator
+endif()
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
-#set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
@@ -10,9 +15,9 @@ set(exe "meshBuilder") # this line is not required but can be changed to change 
 project(${exe})
 add_executable(${exe} src/main.cpp)
 
-
-# Set linker flags
-set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic ")
+if(NOT docker)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic ")
+endif()
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope -g") # different options available for using Sanitizer
 
