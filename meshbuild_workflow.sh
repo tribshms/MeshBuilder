@@ -1,4 +1,7 @@
 #!/bin/bash
+#move files to data repostiory
+mv src/workflow/* data/ && mv build/MeshBuilder data/ && mv src/metis_builds/METIS/build/programs/gpmetis data/
+cd data
 
 # Prompt the user to input information
 echo "Enter the path to the .in file to be used by MeshBuilder: "
@@ -8,13 +11,11 @@ read nn
 echo "Enter partitioning method,
 		1 --> SurfaceFlow (SF),
 		2 --> Surface-Subsurface Flow (SSF),
-    3 --> Surface-Subsurface Flow with Headwaters (SSF-H): "
+        3 --> Surface-Subsurface Flow with Headwaters (SSF-H): "
 read OPT_Part
 echo "Enter simulation basename: "
 read basename
 
-echo "File: $file_path \n Number of Nodes: $nn \n"
-pwd
 # Check if the file exists
 if [ -f "$file_path" ]; then
     # If the file exists, execute the programs with the provided inputs
