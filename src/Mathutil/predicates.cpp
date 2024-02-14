@@ -121,7 +121,7 @@ int Predicates::grow_expansion(int elen, REAL* e, REAL b, REAL* h)
 /***************************************************************************** 
 **                                                                            
 **  grow_expansion_zeroelim()   Add a scalar to an expansion, eliminating     
-**                              zero components from the output expansion.    
+**                              zero components from the output expansion.
 **                                                                            
 **  Sets h = e + b.  See the long version of my paper for details.           
 **                                                                            
@@ -202,7 +202,7 @@ int Predicates::expansion_sum(int elen, REAL* e, int flen, REAL* f, REAL* h)
 /***************************************************************************** 
 **                                                                            
 **  expansion_sum_zeroelim1()   Sum two expansions, eliminating zero          
-**                              components from the output expansion.         
+**                              components from the output expansion.
 **                                                                            
 **  Sets h = e + f.  See the long version of my paper for details.            
 **                                                                            
@@ -257,7 +257,7 @@ int Predicates::expansion_sum_zeroelim1(int elen, REAL* e, int flen,
 /***************************************************************************** 
 **                                                                            
 **  expansion_sum_zeroelim2()   Sum two expansions, eliminating zero          
-**                              components from the output expansion.         
+**                              components from the output expansion.
 **                                                                            
 **  Sets h = e + f.  See the long version of my paper for details.            
 **                                                                            
@@ -382,7 +382,7 @@ int Predicates::fast_expansion_sum(int elen, REAL* e,
 /***************************************************************************** 
 **                                                                            
 **  fast_expansion_sum_zeroelim()   Sum two expansions, eliminating zero      
-**                                  components from the output expansion.     
+**                                  components from the output expansion.
 **                                                                            
 **  Sets h = e + f.  See the long version of my paper for details.            
 **                                                                            
@@ -525,7 +525,7 @@ int Predicates::linear_expansion_sum(int elen, REAL* e,
 /***************************************************************************** 
 **                                                                            
 **  linear_expansion_sum_zeroelim()   Sum two expansions, eliminating zero   
-**                                    components from the output expansion. 
+**                                    components from the output expansion.
 **                                                                            
 **  Sets h = e + f.  See either version of my paper for details.              
 **                                                                           
@@ -637,7 +637,7 @@ int Predicates::scale_expansion(int elen, REAL* e, REAL b, REAL* h)
 /***************************************************************************** 
 **                                                                            
 **  scale_expansion_zeroelim()   Multiply an expansion by a scalar,          
-**                               eliminating zero components from the         
+**                               eliminating zero components from the
 **                               output expansion.                            
 **                                                                           
 **  Sets h = be.  See either version of my paper for details.                 

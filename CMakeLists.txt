@@ -11,7 +11,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-set(exe "meshBuilder") # this line is not required but can be changed to change name of executable
+set(exe "MeshBuilder") # this line is not required but can be changed to change name of executable
 project(${exe})
 add_executable(${exe} src/main.cpp)
 
