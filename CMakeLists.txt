@@ -15,6 +15,9 @@ set(exe "MeshBuilder") # this line is not required but can be changed to change 
 project(${exe})
 add_executable(${exe} src/main.cpp)
 
+set(cxx_flags "-g")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${cxx_flags}")
+
 if(NOT docker)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic ")
 endif()
