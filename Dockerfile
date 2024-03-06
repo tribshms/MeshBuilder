@@ -34,6 +34,9 @@ RUN make config prefix=~/src/metis_builds \
 WORKDIR /meshbuild
 
 # for volume and where meshbuilder workflow lives
+RUN mkdir "data"
+
+
 
 
 

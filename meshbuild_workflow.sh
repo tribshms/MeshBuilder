@@ -11,7 +11,7 @@ read nn
 echo "Enter partitioning method,
 		1 --> SurfaceFlow (SF),
 		2 --> Surface-Subsurface Flow (SSF),
-        3 --> Surface-Subsurface Flow with Headwaters (SSF-H): "
+		3 --> Surface-Subsurface Flow with Headwaters (SSF-H):"
 read OPT_Part
 echo "Enter simulation basename: "
 read basename

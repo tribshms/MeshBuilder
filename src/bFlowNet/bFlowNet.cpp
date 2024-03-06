@@ -1250,7 +1250,7 @@ void bFlowNet::PrintArcInfoLinks(bInputFile &infile)
 #define STEDGWEIGHT 2.5
 #define SETTLED    3
 #define INSTACK    2
-#define RECURS     8
+#define RECURS     25
 
 void bFlowNet::WeightedShortestPath()
 {
@@ -1353,7 +1353,16 @@ void bFlowNet::WeightedShortestPath()
   }
   
   // Find STREAM nodes that have not been passed by during the  
-  // preceding operations and make them 'HILLSLOPE' nodes 
+  // preceding operations and make them 'HILLSLOPE' nodes
+  int num_streams_nodes = 0;
+  for (niter = nodeList->begin(); niter != nodeList->getLastActive(); niter++) {
+        cn = (*niter);
+        if (cn->getBoundaryFlag() == kStream) {
+            num_streams_nodes++;
+        }
+  }
+
+
   int count = 0;
   for (niter = nodeList->begin();
        niter != nodeList->getLastActive(); niter++) {
@@ -1364,6 +1373,10 @@ void bFlowNet::WeightedShortestPath()
     }
   }
   cout << "CHANGED " << count << " stream to nonboundary" << endl;
+
+  if(num_streams_nodes == count){
+      throw runtime_error("All stream nodes were converted to interior nodes, no reaches were identified. Increase stream node density.");
+  }
 
   // Due to some peculiarities, we need to re-check stream heads again
   for (HeadsIter = HeadsLst.begin();
