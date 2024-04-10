@@ -1,0 +1,6 @@
+<component name="CopyrightManager">
+  <copyright>
+    <option name="notice" value="MeshBuilder&#10;&#10;Copyright (c) &amp;#36;originalComment.match(&quot;Copyright \(c\) (\d+)&quot;, 1, &quot;-&quot;, &quot;&amp;#36;today.year&quot;)&amp;#36;today.year. tRIBS Developers&#10;&#10;See LICENSE file in the project root for full license information." />
+    <option name="myName" value="tRIBS" />
+  </copyright>
+</component>
