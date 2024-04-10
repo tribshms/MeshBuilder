@@ -1,63 +1,40 @@
 # MeshBuilder
 
-MeshBuilder is a utility program required to generate the graphfiles for parallel [tRIBS](https://tribshms.readthedocs.io/en/latest/index.html) simulation.
+MeshBuilder is a utility program required to generate the graphfile for parallel [tRIBS](https://tribshms.readthedocs.io/en/latest/index.html) simulation.
 
-# Obtaining MeshBuilder
-Two options are available for using MeshBuilder: (1) use the [docker image](https://tribshms.readthedocs.io/en/latest/man/Docker.html) maintained by the tRIBS developers, or (2) Build your own from the source code in this repository. __We highly recommend the former to ease of use.__ 
+## Obtaining MeshBuilder
+Two options are available for using MeshBuilder: (1) use the [docker image](https://tribshms.readthedocs.io/en/latest/man/Docker.html) maintained by the tRIBS developers, or (2) Build your own from the source code in this repository. __We highly recommend the former for ease of use.__ Instructions for using the docker image are found on the tRIBS documentation [page](https://tribshms.readthedocs.io/en/latest/man/Docker.html).
 
-
-
-Currently MeshBuilder is only supported by the GNU compiler collection. This version of meshBuilder can be compiled and installed using cmake as follows:
+If you decide to build MeshBuilder, note that is only supported by the GNU compiler collection. This version of MeshBuilder can be compiled and built using CMake as follows:
 
 ```bash
 cmake -B path/to/build/directory -S path/to/source directory
 cmake --build path/to/build/directory --target all
 ```
+Additional information on working with CMake is available on the tRIBS documentation [page](https://tribshms.readthedocs.io/en/latest/man/Model_Execution.html#cmake).
 
-The meshBuilder runs off the .in file which used by tRIBS and in order to build a partitioned mesh the value 9 must be supplied for mesh buildin option.
-This is demonstrated as follows:
-
-OPTMESHINPUT:   Mesh input data option  
-9
-
-Then run meshBuilder demonstrated by the below example:
+## Working with MeshBuilder
+MeshBuilder requires a .in file, similar to tRIBS, with at least the keywords:__POINTFILENAME__ and __OUTFILENAME__ provided. __OPTMESHINPUT__ should also be set to option 9. MeshBuilder can be run via the command line as follows.:
 
 ```meshBuilder example.in```
 
-You can always go back to running Option 8 by changing the OPTMESHINPUT to
-verify that meshBuilder is getting the same answer.  Option 8 and Option 9,
-serial and parallel should produce the same qout information.
+MeshBuilder will produce a number of output files in identifying how the model nodes are connected through runoff and sub-surface fluxes. Of these the most important one is the _connectivity.meshb_ file which provides a list of reaches to be partitioned. Once _connectivity.meshb_ is generated it must be converted into a readable format by [METIS](http://glaros.dtc.umn.edu/gkhome/metis/metis/overview). METIS then takes the different reaches and partitions them based on three options:
 
-You will know that you correctly got Option 9 because it will inform you that
-it is loading files.
+1) SurfaceFlow (SF)
+2) Surface-Subsurface Flow (SSF)
+3) Surface-Subsurface Flow with Headwaters (SSF-H).
 
-Read reach nodes: Pass 1  
-Read reach edges: Pass 1  
-Read reach nodes: Pass 2  
-Read reach edges: Pass 2  
+Once METIS is complete, the outputs are then converted back into a format readable by tRIBS denoted as _*.reach_. This is the graphfile required for the keyword__GRAPHFILE__ if __PARALLEMODE__ is turned on. To aid in these conversions we provide 2 pearl scripts _connectivity2metis.pl_ and  _metis_2tribs.pl_ utilized by the shell script. _run_metis.zsh_. These files are stored under _src/workflow_. Before you use this script you must build your own version of METIS as outlined [here](https://github.com/KarypisLab/METIS) and also ensure the _connectivity.meshb_ was generated from MeshBuilder. To run this basic utility script, your must provide the additional argument specifying the number of cores for partitioning, how the mesh should be partitioned based on the above options, and the base name of your simulation. For example to partition a mesh for the [Big Spring Benchmark](https://zenodo.org/records/10951574) onto three cores by Surface Flow (option 1) only, you would run:
 
-The meshBuilder operates only from a .points file at this time.  If the
-points file changes the meshBuilder must be run again, but otherwise the
-meshBuilder files are used to do the setup for a tRIBS run.
+```zsh
+# ./run_metis.zsh NumberOfNodes OPT_Part basename
+./run_metis.zsh 3 1 bigsp
+```
 
-## Output
-meshBuilder produces the following files:
+Finally, we recommend that:
 
-### reach.meshb     
-This is an ASCII directory file which gives each reach and the numbers of regular nodes and edges in that reach and the
-the number of flux nodes and edges in the reach. The flux nodes are those which must communicate with the reach nodes but which might live on another processor.
-The counts of nodes and edges are used to find the offset within the file for a particular reach.  The first thing that happens when option 9 is run, is that the partitionin of reaches among the processors is decided.  Then each processor finds the offset in the file for its information and reads in only things needed by its own reaches.
+1) All executables, including MeshBuilder, METIS, and the perl/shell script are located in the same folder as your .in file.
+2) That you review the output files from METIS denoted .out. These provide valuable information about whether the partitioning was successful on the requested number of cores. In some instances it possible you can request that the mesh be partitioned finer then is possible. In this case you will over-allocate the number of cores required for the actual task of running your tRIBS simulation.
+3) Finally, note that If the points file changes MeshBuilder must be run again.
 
-### nodes.meshb & edges.meshb
-These are binary files with the data needed to build the mesh and flow net for any reach.  This will not contain all of the tCNode information but only the part of it needed for the flow net.  When option 9 has initialized the mesh is built, the flownet is built, and those variables needed by both are filled in.  The rest of the initialization is then done by the current simulation.  So tFlowNet will be initialized but tKinemat will not for instance.
-
-### fluxnodes.meshb & fluxedges.meshb
-These are binary files with the data needed for the fluxnodes and edges.  Because of runon, two nodes beyond thenode owned by a reach must be kept, and the edges which allow circling those nodes must be supplied.  These nodes are added as "inActive" on a processor.  Since it is possible for different reaches to have the same flux nodes, meshBuilder makes sure they are unique on a processor.
-
-### flow.meshb
-This binary file contains the member variables needed by tFlowNet which was already run on meshBuilder, but which tRIBS will use.
-
-### TODO:
-- Add additional instructions for running metis
-- Can we package in metis and to mesh builder build?
-- Need to package helper scripts in a easy way to run w/ subprocess
+To wrap up this section, some of the above steps can be bypassed by using the [docker image](https://tribshms.readthedocs.io/en/latest/man/Docker.html) of MeshBuilder. The image includes the METIS executable as well as the required pearl and shell scrips. All that is required in this case is to provide the input file as well as the points file to the appropriate volume (directory) that will be mounted to the image and then you can run _meshbuild_workflow.sh_ which will take you through the above steps. Further documentation is provided [here](https://tribshms.readthedocs.io/en/latest/man/Docker.html#meshbuilder).
