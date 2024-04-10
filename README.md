@@ -1,6 +1,6 @@
 # MeshBuilder
 
-MeshBuilder is a utility program required to generate the graphfile for parallel [tRIBS](https://tribshms.readthedocs.io/en/latest/index.html) simulations.
+MeshBuilder is a utility program required to generate teh `*.reach` graphfile for parallel [tRIBS](https://tribshms.readthedocs.io/en/latest/index.html) simulations.
 
 ## Obtaining MeshBuilder
 Two options are available for using MeshBuilder: (1) use the [docker image](https://tribshms.readthedocs.io/en/latest/man/Docker.html) maintained by the tRIBS developers, or (2) Build your own from the source code in this repository. __We highly recommend the former for ease of use.__ Instructions for using the docker image are found on the tRIBS documentation [page](https://tribshms.readthedocs.io/en/latest/man/Docker.html).
