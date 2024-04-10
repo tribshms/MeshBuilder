@@ -34,7 +34,7 @@ Once METIS is complete, the outputs are then converted back into a format readab
 Finally, we recommend that:
 
 1) All executables, including MeshBuilder, METIS, and the perl/shell script are located in the same folder as your .in file.
-2) That you review the output files from METIS denoted .out. These provide valuable information about whether the partitioning was successful on the requested number of cores. In some instances it possible you can request that the mesh be partitioned finer then is possible. In this case you will over-allocate the number of cores required for the actual task of running your tRIBS simulation.
+2) That you review the output files from METIS denoted .out. These provide valuable information about whether the partitioning was successful on the requested number of cores. In some instances you can request that the mesh be partitioned finer then is possible. In this case you will over-allocate the number of cores required for the actual task of running your tRIBS simulation.
 3) Finally, note that If the points file changes MeshBuilder must be run again.
 
 To wrap up this section, some of the above steps can be bypassed by using the [docker image](https://tribshms.readthedocs.io/en/latest/man/Docker.html) of MeshBuilder. The image includes the METIS executable as well as the required pearl and shell scrips. All that is required in this case is to provide the input file as well as the points file to the appropriate volume (directory) that will be mounted to the image and then you can run _meshbuild_workflow.sh_ which will take you through the above steps. Further documentation is provided [here](https://tribshms.readthedocs.io/en/latest/man/Docker.html#meshbuilder).
