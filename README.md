@@ -1,5 +1,12 @@
 # MeshBuilder
 
+MeshBuilder is a utility program required to generate the graphfiles for parallel [tRIBS](https://tribshms.readthedocs.io/en/latest/index.html) simulation.
+
+# Obtaining MeshBuilder
+Two options are available for using MeshBuilder: (1) use the [docker image](https://tribshms.readthedocs.io/en/latest/man/Docker.html) maintained by the tRIBS developers, or (2) Build your own from the source code in this repository. __We highly recommend the former to ease of use.__ 
+
+
+
 Currently MeshBuilder is only supported by the GNU compiler collection. This version of meshBuilder can be compiled and installed using cmake as follows:
 
 ```bash
