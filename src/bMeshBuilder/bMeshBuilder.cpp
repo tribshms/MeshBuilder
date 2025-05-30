@@ -35,20 +35,51 @@ bMeshBuilder::bMeshBuilder(bInputFile& infile)
      nodeFile.close();
      edgeFile.close();
 
-     // Create mesh using only structural nodes
-     baseMesh = new bMesh<bNode>();
+    // Read in MESHINPUT Option, previously meshbuilder assumed only poitns files
+    int read = infile.ReadItem( read, "OPTMESHINPUT" );  
+    
+    if( read < 1 || read > 9 ){
+      cerr << "\nInvalid mesh input option requested.";
+      cerr << "\nValid options for reading mesh input are:\n"
+        << "  1 -- read mesh from input data files\n"
+        << "  8 -- create mesh from points file using Triangulator\n\n";
+      exit(1);
+    }
 
-     // Using a points file, triangulate to create nodes, edge, triangles
-     // Write this basic structure to temporary files
-     clock = time(NULL);
-     cout << "bMesh: MakeBasicMesh ... " << ctime(&clock) << endl;
-     baseMesh->MakeBasicMesh(infile);
+    // Create mesh using only structural nodes
+    baseMesh = new bMesh<bNode>();
+     
+    if( read == 1 ) {
+      cout<<"\n\nCreating Mesh from Existing Mesh (Option 1)"<<endl;
+      cout<<"---------------------------------------------------"<<endl;
+      baseMesh = new bMesh<bNode>();      
+      baseMesh->MakeMeshFromInputData( infile );
+      cout<<"\nMakeMeshFromInputData Successful Using Option 1"<<endl<<flush;
 
-     // Read in the temporary files building just nodes, edges, triangles
-     // Do the voronoi calculations and add the results to nodes and edges
-     clock = time(NULL);
-     cout << "bMesh: RefineBasicMesh ... " << ctime(&clock) << endl;
-     baseMesh->RefineBasicMesh();
+      // NOW, the mesh is in 'baseMesh'. We need to calculate Voronoi properties
+      // and then write it to .basic files.
+      // This mirrors what RefineBasicMesh does after loading temporary files.
+      cout << "bMesh: Calculating Voronoi for pre-built mesh ... " << ctime(&clock) << endl;
+      baseMesh->setVoronoiVertices();
+      baseMesh->CalcVoronoiEdgeLengths();
+      baseMesh->CalcVAreas();
+
+    } else if ( read == 8 ) { // "triangulate from points" option
+      cout<<"\n\nCreating Mesh from Points File (Option 8)"<<endl;
+      cout<<"---------------------------------------------------"<<endl;
+      // Using a points file, triangulate to create nodes, edge, triangles
+      // Write this basic structure to temporary files
+      clock = time(NULL);
+      cout << "bMesh: MakeBasicMesh ... " << ctime(&clock) << endl;
+      baseMesh->MakeBasicMesh(infile);
+
+      // Read in the temporary files building just nodes, edges, triangles
+      // Do the voronoi calculations and add the results to nodes and edges
+      clock = time(NULL);
+      cout << "bMesh: RefineBasicMesh ... " << ctime(&clock) << endl;
+      baseMesh->RefineBasicMesh(); // This already does Voronoi calculations
+
+    }
 
      // Write the complete node and edge files which will be read in later
      // *** Writing bNode

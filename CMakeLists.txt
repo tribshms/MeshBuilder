@@ -59,6 +59,7 @@ target_sources(
         src/bMeshElements/bMeshElements.cpp
         src/bMesh/bTriangulator.h
         src/bMesh/bTriangulator.cpp
+        src/bListInputData/bListInputData.h
 #
         src/bMesh/heapsort.h
         src/bMeshList/bMeshList.h
