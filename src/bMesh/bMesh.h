@@ -28,7 +28,6 @@
 #include "src/bMeshElements/bMeshElements.h"
 #include "src/bInOut/bInputFile.h"
 #include "src/bListInputData/bListInputData.h"
-//#include "src/bList/bList.h"
 
 #ifdef ALPHA_64
   #include <stdlib.h>
@@ -159,6 +158,7 @@ bMesh< bSubNode >::~bMesh()
 //                    
 //   Calls: tListInputData( infile ), CheckMeshConsistency()
 //   Inputs: infile -- main input file from which various items are read
+//
 //=========================================================================
 
 template< class bSubNode >

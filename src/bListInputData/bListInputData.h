@@ -107,9 +107,9 @@ public:
 **  the time in each file is identified by a space character preceding it
 **  on the same line.
 **
-**  Modifications for tRIBS simplifies routine by not having to search
-**  through multiple time slices. tRIBS has only one time slice at 
-**  INPUTTIME = 0. Option for CHILD maintained. 
+**  Modifications for MeshBuilder simplifies routine by not having to search
+**  through multiple time slices. MeshBuilder has only one time slice at 
+**  time zero. Option for CHILD not maintained, input time assumed zero. 
 **
 **************************************************************************/
 
@@ -159,10 +159,10 @@ bListInputData( bInputFile &infile )
 		cerr <<"Unable to open triangulation input file(s).";
 	}
 	
-	// Find out which time slice we want to extract
+	// Timeslice hardcoded to 0 as the time funcationaility is not used.
 	intime = 0;
 	
-	cout<<"\nReading in existing mesh files for input time slice = "<< intime<<": "<<endl;
+	cout<<"\nReading in existing mesh files:"<<endl;
 	cout<<"'"<< basename << ".nodes'"<<endl;
 	cout<<"'"<< basename << ".edges'"<<endl;
 	cout<<"'"<< basename << ".tri'"<<endl;
