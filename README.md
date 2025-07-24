@@ -14,7 +14,7 @@ cmake --build path/to/build/directory --target all
 Additional information on working with CMake is available on the tRIBS documentation [page](https://tribshms.readthedocs.io/en/latest/man/Model_Execution.html#cmake).
 
 ## Working with MeshBuilder
-MeshBuilder requires a .in file, similar to tRIBS, with at least the keywords:__POINTFILENAME__ and __OUTFILENAME__ provided. __OPTMESHINPUT__ should also be set to option 9. MeshBuilder can be run via the command line as follows.:
+MeshBuilder requires a .in file, similar to tRIBS, with at least the keywords:__OUTFILENAME__, __OPTMESHINPUT__, and __POINTFILENAME__ or __INPUTDATAFILE__ provided. __OPTMESHINPUT__ follows the same scheme as the tRIBS model, option 1 will read in an preexisting mesh defined by .edges, .tri, .nodes, and .z files. Option 8 will read in the .points file and will conduct the triangulation based on the x, y, and z points. MeshBuilder can be run via the command line as follows.:
 
 ```meshBuilder example.in```
 

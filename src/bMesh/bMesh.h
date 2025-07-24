@@ -27,6 +27,7 @@
 #include "src/bMesh/bTriangulator.h"
 #include "src/bMeshElements/bMeshElements.h"
 #include "src/bInOut/bInputFile.h"
+#include "src/bListInputData/bListInputData.h"
 
 #ifdef ALPHA_64
   #include <stdlib.h>
@@ -41,6 +42,7 @@
   #include <stdlib.h>
   #include <strings.h>
   #include <list.h>
+  #include <vector>
 #endif
 
 using namespace std;
@@ -77,6 +79,9 @@ public:
    // Calculate counter clockwise edges so that spokes can be eliminated
    void MakeCCWEdges();
 
+   // Creating Mesh from Existing Mesh 
+   void MakeMeshFromInputData(bInputFile& infile);
+
    // Calculate voronoi vertex and areas and save in nodes and edges
    void setVoronoiVertices();
    void CalcVoronoiEdgeLengths();
@@ -109,7 +114,6 @@ protected:
    bTriangle* mSearchOriginTriPtr; 	// triangle to start searches from
 };
 
-
 // DEFAULT CONSTRUCTOR
 template< class bSubNode >
 bMesh< bSubNode >:: bMesh()
@@ -141,6 +145,204 @@ bMesh< bSubNode >::~bMesh()
     triList.erase(triList.begin(), triList.end());
 
     cout << "bMesh Object has been destroyed..." << endl;
+}
+
+//=========================================================================
+//
+//
+//  bMesh::MakeMeshFromInputData()
+//  
+//   Orignal code from tRIBS, tMesh.cpp but major changes to the orignal code 
+//   code were made to get the code working in MeshBuilder. CJC 2025
+//   Constructs tListInputData object and makes mesh from data in that object.
+//                    
+//   Calls: tListInputData( infile ), CheckMeshConsistency()
+//   Inputs: infile -- main input file from which various items are read
+//
+//=========================================================================
+
+template< class bSubNode >
+void bMesh< bSubNode >::MakeMeshFromInputData(bInputFile& infile)
+{
+    bListInputData< bSubNode > input( infile );
+
+    int i;
+    nnodes = input.x.size();
+    nedges = input.orgid.size();
+    ntri = input.p0.size();
+        
+    assert( nnodes > 0 );
+    assert( nedges > 0 );
+    assert( ntri > 0 );
+        
+    // Create the node list by creating a temporary node and iteratively
+    // (1) assigning it values from the input data and (2) inserting it
+    // onto the back of the node list.
+        
+    // --- NODES ---
+    cout << "\nCreating node list..." << endl;
+    // Populate nodeList 
+    for( int i = 0; i < nnodes; i++ ) {
+        bSubNode* tempnode_ptr = new bSubNode(); // <<< USE DEFAULT CONSTRUCTOR
+        // Now set all properties for tempnode_ptr
+        tempnode_ptr->set3DCoords( input.x[i], input.y[i], input.z[i] );
+        tempnode_ptr->setID( i ); // Crucial: 0 to nnodes-1
+        int bound = input.boundflag[i]; // boundflag comes from tListInputData
+        tempnode_ptr->setBoundaryFlag( bound );
+
+        // Use bMeshList's insertion methods
+        if( (bound == kNonBoundary) || (bound == kStream) ) // Use defined constants if available
+            nodeList.insertAtActiveBack( tempnode_ptr );
+        else if( bound == kOpenBoundary )
+            nodeList.insertAtBoundFront( tempnode_ptr );
+        else // kClosedBoundary
+            nodeList.insertAtBack( tempnode_ptr );
+    }
+
+    // Create NodeTable 
+    std::vector<bSubNode*> NodeTable_vec(nnodes, nullptr);
+    for (std::_List_iterator<bSubNode*> it = nodeList.begin(); it != nodeList.end(); ++it) {
+        bSubNode* node_ptr = *it;
+        if (node_ptr && node_ptr->getID() >= 0 && node_ptr->getID() < nnodes) {
+            NodeTable_vec[node_ptr->getID()] = node_ptr;
+        }
+    }
+
+    // --- EDGES ---
+    cout << "\nCreating edge list..." << endl;
+    // Populate edgeList (bMeshList<bEdge*>, i.e., std::list<bEdge*>)
+    int miNextEdgID;
+    for( miNextEdgID = 0; miNextEdgID < nedges; miNextEdgID++ ){ // Iterate for each edge from input
+        bEdge* tempedge_ptr = new bEdge();
+        tempedge_ptr->setID( miNextEdgID ); // ID is 0 to nedges-1, matching input.orgid's implicit index
+
+        bSubNode *nodPtr1 = NodeTable_vec[ input.orgid[miNextEdgID] ]; // Use NodeTable_vec
+        tempedge_ptr->setOriginPtr( nodPtr1 );
+        int obnd = nodPtr1->getBoundaryFlag();
+
+        bSubNode *nodPtr2 = NodeTable_vec[ input.destid[miNextEdgID] ]; // Use NodeTable_vec
+        tempedge_ptr->setDestinationPtr( nodPtr2 );
+        int dbnd = nodPtr2->getBoundaryFlag();
+        
+        // Set flow allowed and insert into edgeList
+        if( obnd == kClosedBoundary || dbnd == kClosedBoundary
+            || (obnd==kOpenBoundary && dbnd==kOpenBoundary) ) {
+            tempedge_ptr->setFlowAllowed( 0 );
+            edgeList.insertAtBack( tempedge_ptr );
+        } else {
+            tempedge_ptr->setFlowAllowed( 1 );
+            edgeList.insertAtActiveBack( tempedge_ptr );
+        }
+    }
+     // The original code incremented miNextEdgID by 2 because it created pairs.
+     // Your tListInputData provides orgid[i], destid[i], nextid[i] for each individual edge 'i'.
+     // So the loop for miNextEdgID should go from 0 to nedges-1.
+
+    // Create EdgeTable (std::vector based)
+    std::vector<bEdge*> EdgeTable_vec(nedges, nullptr);
+    for (std::_List_iterator<bEdge*> it = edgeList.begin(); it != edgeList.end(); ++it) {
+        bEdge* edge_ptr = *it;
+        if (edge_ptr && edge_ptr->getID() >= 0 && edge_ptr->getID() < nedges) {
+            EdgeTable_vec[edge_ptr->getID()] = edge_ptr;
+        }
+    }
+
+    // --- SPOKE LISTS & CCW EDGES ---
+    cout << "\nSetting up spoke lists and CCW edges..." << endl;
+    for (std::_List_iterator<bSubNode*> it = nodeList.begin(); it != nodeList.end(); ++it) {
+        bSubNode* curnode = *it;
+        int node_id = curnode->getID(); // This is 0 to nnodes-1
+
+        // input.edgid[node_id] is the ID of the first spoke for this node
+        // input.nextid[edge_id] is the next CCW edge for 'edge_id'
+        
+        const int first_spoke_id = input.edgid[node_id];
+        if (first_spoke_id < 0 || first_spoke_id >= nedges) { /* error */ continue; }
+
+        bEdge *first_edge_ptr = EdgeTable_vec[first_spoke_id];
+        if (!first_edge_ptr) { /* error */ continue; }
+
+        curnode->setEdg( first_edge_ptr ); // Set first edge
+        // The spoke list in bNode seems to build itself if setEdg and ccw links are correct.
+        // Or, we might need to populate it manually if that's how tMesh did it.
+        // The original MakeMeshFromInputData did:
+        // curnode->insertBackSpokeList( edgPtr );
+        // int ne;
+        // for( ne = input.nextid[e1]; ne != e1; ne = input.nextid[ne] ) {
+        //    bEdge *nextEdgPtr = EdgeTable_vec[ne];
+        //    curnode->insertBackSpokeList( nextEdgPtr );
+        // }
+        // Let's assume bNode::makeCCWEdges() or similar handles full spoke list from first edge + CCW links.
+
+        // If `bNode::insertBackSpokeList` is necessary:
+        curnode->getSpokeListNC().clear(); // Clear any existing spokes
+        bEdge* current_spoke_ptr = first_edge_ptr;
+        int current_spoke_id = first_spoke_id;
+        do {
+            curnode->insertBackSpokeList(current_spoke_ptr);
+            current_spoke_id = input.nextid[current_spoke_id]; // Get next CCW edge ID from .edges file data
+            if (current_spoke_id < 0 || current_spoke_id >= nedges) { /* error, break */ break;}
+            current_spoke_ptr = EdgeTable_vec[current_spoke_id];
+            if (!current_spoke_ptr) { /* error, break */ break; }
+        } while (current_spoke_id != first_spoke_id && curnode->getSpokeListNC().size() < 100); // Safety break
+    }
+
+    // Set CCW edges for each edge
+    for (std::_List_iterator<bEdge*> it = edgeList.begin(); it != edgeList.end(); ++it) {
+        bEdge* curedg = *it;
+        int edge_id = curedg->getID(); // 0 to nedges-1
+        int ccw_neighbor_id = input.nextid[edge_id]; // From .edges file data
+
+        if (ccw_neighbor_id >= 0 && ccw_neighbor_id < nedges) {
+            bEdge* ccwedg_ptr = EdgeTable_vec[ccw_neighbor_id];
+            curedg->setCCWEdg( ccwedg_ptr );
+        } else { /* error: invalid CCW edge ID */ }
+    }
+
+
+    // --- TRIANGLES ---
+    cout << "\nSetting up triangle connectivity..." << endl;
+    // Change triList to std::list<bTriangle*> or bMeshList<bTriangle*>
+    // For now, assuming it's std::list<bTriangle*> as in the original bMesh.h code
+    for (int i = 0; i < ntri; i++ ) {
+        bTriangle* newtri_ptr = new bTriangle();
+        newtri_ptr->setID( i ); // 0 to ntri-1
+        newtri_ptr->setPPtr( 0, NodeTable_vec[ input.p0[i] ] );
+        newtri_ptr->setPPtr( 1, NodeTable_vec[ input.p1[i] ] );
+        newtri_ptr->setPPtr( 2, NodeTable_vec[ input.p2[i] ] );
+        newtri_ptr->setEPtr( 0, EdgeTable_vec[ input.e0[i] ] );
+        newtri_ptr->setEPtr( 1, EdgeTable_vec[ input.e1[i] ] );
+        newtri_ptr->setEPtr( 2, EdgeTable_vec[ input.e2[i] ] );
+        triList.push_back( newtri_ptr ); // If std::list
+        // If bMeshList: triList.insertAtBack(newtri_ptr); or similar
+    }
+
+    // Create TriTable (std::vector based)
+    std::vector<bTriangle*> TriTable_vec(ntri, nullptr);
+    for (std::_List_iterator<bTriangle*> it = triList.begin(); it != triList.end(); ++it) {
+        bTriangle* tri_ptr = *it;
+        if (tri_ptr && tri_ptr->getID() >= 0 && tri_ptr->getID() < ntri) {
+            TriTable_vec[tri_ptr->getID()] = tri_ptr;
+        }
+    }
+    
+    // Set triangle neighbors
+    for (std::_List_iterator<bTriangle*> it = triList.begin(); it != triList.end(); ++it) {
+        bTriangle* ct = *it;
+        if (!ct) continue;
+        int current_tri_id = ct->getID(); // 0 to ntri-1
+
+        bTriangle* nbrtri;
+        nbrtri = (input.t0[current_tri_id] >= 0 && input.t0[current_tri_id] < ntri) ? TriTable_vec[ input.t0[current_tri_id] ] : nullptr;
+        ct->setTPtr( 0, nbrtri );
+        nbrtri = (input.t1[current_tri_id] >= 0 && input.t1[current_tri_id] < ntri) ? TriTable_vec[ input.t1[current_tri_id] ] : nullptr;
+        ct->setTPtr( 1, nbrtri );
+        nbrtri = (input.t2[current_tri_id] >= 0 && input.t2[current_tri_id] < ntri) ? TriTable_vec[ input.t2[current_tri_id] ] : nullptr;
+        ct->setTPtr( 2, nbrtri );
+    }
+
+    cout<<"\nTesting Mesh..."<<endl;
+    CheckMeshConsistency(); 
 }
 
 //=========================================================================
