@@ -3,13 +3,7 @@
 FROM alpine:3.19.1
 
 # TODO should specify versions--also maybe should have metis source code w/ meshbuilder, can we do that?
-RUN apk update && \
-    apk add --no-cache \
-        build-base=0.5-r3 \
-        cmake=3.27.8-r0 \
-        bash=5.2.21-r0\
-        zsh=5.9-r2\
-        perl=5.38.2-r0
+RUN apk update && apk add --no-cache build-base cmake bash zsh perl
 
 WORKDIR /meshbuild
 COPY CMakeLists.txt ./
