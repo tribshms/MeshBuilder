@@ -119,8 +119,8 @@ bListInputData( bInputFile &infile )
 {
 	int righttime;                   	//flag: found the right time slice
 	double time, intime;             	//current & desired time
-	char basename[80],               	//base name of input files
-		inname[80];                  	//full name of an input file
+	char basename[1024],               	//base name of input files
+		inname[1024];                  	//full name of an input file
 	char nodeHeader[kMaxNameLength]; 	//header line read from input file
 	char zHeader[kMaxNameLength]; 	//header line read from input file
 	char edgHeader[kMaxNameLength]; 	//header line read from input file

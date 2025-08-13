@@ -379,7 +379,7 @@ void bMesh< bSubNode >::MakeBasicMesh(bInputFile& infile)
     int i, numpts;                      // no. of points in mesh
     double x, y, z;
     int b;
-    char pointFilenm[80];            // name of file containing (x,y,z,b) data
+    char pointFilenm[1024];            // name of file containing (x,y,z,b) data
     ifstream pointfile;              // the file (stream) itself
 
     //Read Points
