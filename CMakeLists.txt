@@ -4,21 +4,20 @@ set(CMAKE_CXX_STANDARD 17)
 set(docker ON) #for docker build
 
 if(NOT docker)
-    set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-13) # need to set to gcc compiler to access _List_iterator
+    set(CMAKE_CXX_COMPILER /opt/homebrew/bin/g++-13) # need to set to gcc compiler to acces _List_iterator
 endif()
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_TRY_COMPILE_TARGET_TYPE "STATIC_LIBRARY")
 
-set(exe "meshBuilder") # this line is not required but can be changed to change name of executable
+set(exe "MeshBuilder") # this line is not required but can be changed to change name of executable
 project(${exe})
 add_executable(${exe} src/main.cpp)
 
 
 #set(cxx_flags "-g")
-set(cxx_flags "-static-libstdc++ -static-libgcc")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${cxx_flags}")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${cxx_flags}")
 
 if(NOT docker)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-ld_classic ")
@@ -27,7 +26,7 @@ endif()
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer -fsanitize-address-use-after-scope -g") # different options available for using Sanitizer
 
 # currently only tested on new macs (M1 and M2 chips)
-message(WARNING "Compiling meshBuilder for tRIBS")
+message(WARNING "Compiling MeshBuilder for tRIBS")
 
 
 target_compile_definitions(${exe}
