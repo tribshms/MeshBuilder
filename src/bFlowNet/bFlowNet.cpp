@@ -1196,7 +1196,7 @@ void bFlowNet::DeriveStreamReaches(bInputFile &infile)
 void bFlowNet::PrintArcInfoLinks(bInputFile &infile) 
 {
   int cnt; // flag;
-  char fullName[kMaxNameSize+20];
+  char fullName[1024];
   ofstream ControlOut;
 
   bFlowNode *cn;

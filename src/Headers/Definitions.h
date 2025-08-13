@@ -28,8 +28,8 @@
 const std::string  VERSION	= "MeshBuilder 1.0";
 
 // File reading constants
-const int kMaxNameLength	= 200;
-const int kMaxNameSize		= 200;
+const int kMaxNameLength	= 1024;
+const int kMaxNameSize		= 1024;
 const char kCommentMark		= '#';
 
 // Types of nodes
